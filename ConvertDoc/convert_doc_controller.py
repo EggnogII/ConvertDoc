@@ -158,3 +158,87 @@ def convert_markdown_to_docx_button(progress_bar):
 
             # Inform the user that the process is complete
             messagebox.showinfo("Process Complete", f"Word file is in {output_filename}")
+
+def convert_docx_to_markdown(progress_bar):
+
+        # Initialize Progress Bar Value
+        progress_bar["value"] = 0
+        progress_bar["maximum"] = 100
+
+        # Select a Word Document
+        input_filename = document_selector("Select a Word Document", "docx")
+
+        if input_filename == '':
+            return
+
+        elif input_filename == None:
+            return
+
+        # Prep the input file, setup working directory
+        # Working Directory should be the one where the Input File is selected
+        input_filename_without_path = os.path.basename(input_filename)
+        input_filename_without_spaces = input_filename_without_path.replace(" ", "_")
+        input_filename_without_spaces_or_extension = input_filename_without_spaces.replace(".docx", "")
+        attachments_folder = input_filename_without_spaces_or_extension
+        attachments_folder = attachments_folder.replace("\\", "/")
+        print(attachments_folder)
+
+        # Wrap both the input file and the output file for use with pandoc
+        # Setup pandoc args
+        input_filename = input_filename.replace("/", "\\")
+
+        # Pick a save location instead, then append tha input_filename to that location for pandoc's output
+        output_filename = filedialog.asksaveasfilename(title="Save Markdown File", filetypes=(
+            ("Markdown files", "*.md"), ("all files", "*.*")))
+
+        if output_filename == '':
+            return
+
+        elif output_filename == None:
+            return
+
+        convert_md = 'md'
+        default_encoding = 'utf-8'
+        extracted_media = None
+        if output_filename.endswith('.md'):
+
+            extracted_media = [f"--extract-media={attachments_folder}"]
+        else:
+            print("Proper filename not supplied, appending extension")
+            output_filename += '.md'
+            extracted_media = [f"--extract-media={attachments_folder}"]
+
+        # Update Progress
+        progress_bar["value"] += 10
+
+        # Change working directory to that of the input file
+        output_file_path = os.path.abspath(output_filename)
+        working_directory = os.path.dirname(output_file_path)
+        os.chdir(working_directory)
+
+        # Update Progress
+        progress_bar["value"] += 10
+
+        # Update Progress
+        progress_bar["value"] += 30
+
+        # Execute Pandoc command
+        try:
+            convert_to_md = pypandoc.convert_file(source_file=input_filename, to=convert_md,
+                                                  encoding=default_encoding, outputfile=output_filename,
+                                                  extra_args=extracted_media)
+
+        except RuntimeError as run_time_error:
+            raise run_time_error
+
+        except OSError as os_error:
+            raise os_error
+
+        print("Pandoc command executed.")
+
+        # Update Progress
+        progress_bar["value"] += 40
+
+        # Update Progress
+        progress_bar["value"] += 10
+        return output_filename

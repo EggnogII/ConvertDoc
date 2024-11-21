@@ -26,7 +26,7 @@ class convert_doc_gui:
         east_frame.pack(side=RIGHT)
 
         self.progress_bar = ttk.Progressbar(bottom_frame, orient='horizontal', mode='determinate', maximum=100)
-        self.convert_to_md_button = Button(master, text="Convert DOCX to MD", command=lambda : self.convert_docx_to_markdown())
+        self.convert_to_md_button = Button(master, text="Convert DOCX to MD", command=lambda : convert_doc_controller.convert_docx_to_markdown(self.progress_bar))
         self.convert_to_md_button.pack(padx=10, pady=10, expand=True, side=LEFT)
         self.upload_to_git_button = Button(master, text="Upload DOCX to Git Repo", command=lambda : self.upload_to_git_repo())
         self.upload_to_git_button.pack(padx=10, pady=10, expand=True, side=LEFT)
@@ -34,89 +34,6 @@ class convert_doc_gui:
         self.convert_to_docx_button.pack(padx=10, pady=10, expand=True, side=LEFT)
         self.progress_bar.pack(fill=BOTH, padx=10, pady=10, anchor='center', expand=True)
 
-    def convert_docx_to_markdown(self):
-
-        # Initialize Progress Bar Value
-        self.progress_bar["value"] = 0
-        self.progress_bar["maximum"] = 100
-
-        # Select a Word Document
-        input_filename = convert_doc_controller.document_selector("Select a Word Document", "docx")
-
-        if input_filename == '':
-            return
-
-        elif input_filename == None:
-            return
-
-        # Prep the input file, setup working directory
-        # Working Directory should be the one where the Input File is selected
-        input_filename_without_path = os.path.basename(input_filename)
-        input_filename_without_spaces = input_filename_without_path.replace(" ", "_")
-        input_filename_without_spaces_or_extension = input_filename_without_spaces.replace(".docx", "")
-        attachments_folder = input_filename_without_spaces_or_extension
-        attachments_folder = attachments_folder.replace("\\", "/")
-        print(attachments_folder)
-
-        # Wrap both the input file and the output file for use with pandoc
-        # Setup pandoc args
-        input_filename = input_filename.replace("/", "\\")
-
-        # Pick a save location instead, then append tha input_filename to that location for pandoc's output
-        output_filename = filedialog.asksaveasfilename(title="Save Markdown File", filetypes=(
-            ("Markdown files", "*.md"), ("all files", "*.*")))
-
-        if output_filename == '':
-            return
-
-        elif output_filename == None:
-            return
-
-        convert_md = 'md'
-        default_encoding = 'utf-8'
-        extracted_media = None
-        if output_filename.endswith('.md'):
-
-            extracted_media = [f"--extract-media={attachments_folder}"]
-        else:
-            print("Proper filename not supplied, appending extension")
-            output_filename += '.md'
-            extracted_media = [f"--extract-media={attachments_folder}"]
-
-        # Update Progress
-        self.progress_bar["value"] += 10
-
-        # Change working directory to that of the input file
-        output_file_path = os.path.abspath(output_filename)
-        working_directory = os.path.dirname(output_file_path)
-        os.chdir(working_directory)
-
-        # Update Progress
-        self.progress_bar["value"] += 10
-
-        # Update Progress
-        self.progress_bar["value"] += 30
-
-        # Execute Pandoc command
-        try:
-            convert_to_md = pypandoc.convert_file(source_file=input_filename, to=convert_md,
-                                                  encoding=default_encoding, outputfile=output_filename,
-                                                  extra_args=extracted_media)
-
-        except RuntimeError as run_time_error:
-            raise run_time_error
-
-        except OSError as os_error:
-            raise os_error
-
-        print("Pandoc command executed.")
-
-        # Update Progress
-        self.progress_bar["value"] += 40
-
-        # Update Progress
-        self.progress_bar["value"] += 10
-        return output_filename
 
     def upload_to_git_repo(self):
 
