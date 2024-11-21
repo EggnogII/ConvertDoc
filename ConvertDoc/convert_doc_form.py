@@ -124,193 +124,66 @@ class convert_doc_gui:
         # Execute Pandoc command
         try:
             if extracted_media is None:
-
-
-
-
                 docx_convert = pypandoc.convert_file(source_file=html_tempfile, to=convert_to_docx,
-
-
-
                                                      outputfile=output_filename, encoding=default_encoding)
 
-
-
             else:
-
-
-
                 docx_convert = pypandoc.convert_file(source_file=html_tempfile, to=convert_to_docx,
-
-
-
                                                      outputfile=output_filename, encoding=default_encoding,
-
-
-
                                                      extra_args=extracted_media)
-
-
 
         except RuntimeError as run_time_error:
             raise run_time_error
 
-
-
         except OSError as os_error:
             raise os_error
 
-
-
         print("Pandoc command executed.")
 
-
-
-
         # Update Progress
-
-
-
         self.progress_bar["value"] += 40
-
-
-
-
         # Delete Html tempfile
-
-
-
         os.remove(html_tempfile)
-
-
-
         print("Deleted temporary html file")
 
-
-
-
         # Ask if the save file should be saved in a different location than the original
-
-
-
         save_in_different_location = messagebox.askquestion("Save Location", "Save the word document in a different"
-
-
-
                                                                              "location from the original?")
 
-
-
         if save_in_different_location == 'yes':
-
-
-
             # Get save file name, then copy the file over to that location as that name
-
-
-
             save_filename = filedialog.asksaveasfilename(title="Save Word File", filetypes=(
-
-
-
                 ("Word files", "*.docx"), ("all files", "*.*")))
 
-
-
-
             try:
-
-
-
                 if save_filename.endswith('.docx'):
-
-
-
                     copy(output_filename, save_filename)
-
-
-
                 else:
-
-
-
                     print("Proper filename not supplied, appending extension.")
-
-
-
                     save_filename += '.docx'
-
-
-
                     copy(output_filename, save_filename)
-
-
 
             except shutil.SameFileError:
-
-
-
                messagebox.showwarning("File Exists", f"The file {save_filename} already exists.")
-
-
-
                os.remove(output_filename)
-
-
-
                self.progress_bar["value"] = 0
                return
 
-
-
-
             # Delete output file
-
-
-
             os.remove(output_filename)
 
-
-
-
             # Update Progress
-
-
-
             self.progress_bar["value"] += 10
-
-
-
-
             # Inform the user that the process is complete
-
-
 
             messagebox.showinfo("Process Complete", f"Word file is in {save_filename}")
 
-
-
         else:
-
-
-
             # Update Progress
-
-
-
             self.progress_bar["value"] += 10
 
-
-
-
             # Inform the user that the process is complete
-
-
-
             messagebox.showinfo("Process Complete", f"Word file is in {output_filename}")
-
-
-
 
     def convert_docx_to_markdown(self):
 
