@@ -1,10 +1,14 @@
 from tkinter import filedialog
 
-def markdown_document_selector():
+def document_selector(selection_title, filetype):
 
-    filename = filedialog.askopenfilename(title="Select Markdown File", filetypes=
-    (("Markdown files", "*.md"), ("all files", "*.*")))
+
+    filename = filedialog.askopenfilename(title=selection_title, filetypes=
+
+    (("Documents", f"*.{filetype}"), ("all files", "*.*")))
+
 
     return filename
+
 
 
