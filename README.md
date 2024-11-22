@@ -9,6 +9,8 @@ I found sometimes it would be nice to convert something from Markdown to Word an
 
 ## Todo?
 
-* Support for non-Word based editors
+* Support for non-Word based filetypes (odt, rtf)
+* Support for Jira/Confluence wiki
+* Support for conversion between manifests (csv, json)
 * Support for Previews possibly
 * Possible docgen to scan code and create documentation (probably an AI solution but I'm not sure if/when I'll get around to it)
