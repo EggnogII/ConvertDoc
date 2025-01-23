@@ -5,8 +5,8 @@ from tkinter import *
 def main():
     root = Tk()
     gui = convert_doc_gui(root)
-    minwidth = 854
-    minheight = 480
+    minwidth = 320
+    minheight = 240
 
     screenwidth = minwidth
     screenheight = minheight
@@ -18,7 +18,7 @@ def main():
         screenwidth = horizontal_resolution.QVGA.value
         screenheight = vertical_resolution.QVGA.value
 
-    if fullscreen_width < horizontal_resolution.QHD.value and fullscreen_height < vertical_resolution.QHD.value:
+    if fullscreen_width <= horizontal_resolution.QHD.value and fullscreen_height <= vertical_resolution.QHD.value:
         screenwidth = horizontal_resolution.VGA.value
         screenheight = vertical_resolution.VGA.value
 
